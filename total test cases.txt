@@ -1,0 +1,23 @@
+1. register single certificate  - through admin 
+2. register multiple certificate(10,30,50) - through admin
+3. get details of single certificate
+4. get details of multiple certificate
+
+5. register single certificate  - through other account
+6. register multiple certificate(10,30,50) - through other account
+
+7. add authorisor - through other account
+8. change admin -   through other account
+9. add authorisor - through admin
+14. change admin - through other account
+
+10. register single certificate - through authorised other account
+11 register multiple certificate(10,30,50) - through authorised other account
+
+12. change admin - through authorised account
+13. add authorisor - through 3rd account
+
+14. change admin - through admin
+
+16. get base uri
+
