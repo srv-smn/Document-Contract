@@ -2,7 +2,7 @@
 require("@nomiclabs/hardhat-waffle");
 require("dotenv").config();
 require('hardhat-contract-sizer');
-require('solidity-coverage')
+require('solidity-coverage') //npx hardhat coverage
 require("hardhat-gas-reporter");
 
 module.exports = {
