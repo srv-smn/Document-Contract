@@ -259,6 +259,7 @@ describe("Document Contract with other/unauthorised user:", async function () {
   let documentContract;
   let hash1, hash10, hash30, hash50;
   let baseURL;
+  let zeroAcc;
 
   before(async () => {
     [firstUser, secondUser] = await ethers.getSigners();
@@ -368,6 +369,7 @@ describe("Document Contract with other/unauthorised user:", async function () {
       "QmNbdeGYEC5KYMRrZwbdi22HD5BBbuQmhDzDq2gjS4777R",
       "QmZn4SgQCjgutWFNQP88aZ18CobYG3UGmQoyYf26TKihkA",
     ];
+    zeroAcc='0x0000000000000000000000000000000000000000'
   });
 
   // Deploy contracts
@@ -427,7 +429,7 @@ describe("Document Contract with other/unauthorised user:", async function () {
     ).to.be.revertedWith("Ownable: caller is not the owner");
   });
 
-  it("add authorisor from authorised account", async function () {
+  it("add authorisor from admin account", async function () {
     const t_document = await documentContract
       .connect(firstUser)
       .addAuthorized(secondUser.address);
@@ -522,4 +524,60 @@ describe("Document Contract with other/unauthorised user:", async function () {
     expect(isUser1Owner).to.equal(false);
     expect(isUser2Owner).to.equal(true);
   });
+
+  it("Giving back ownership to user 1 ", async function () {
+    const t_document = await documentContract
+      .connect(secondUser)
+      .transferOwnership(firstUser.address);
+    const receipt = await t_document.wait();
+    const Owner = await documentContract.owner();
+    const isUser1Owner = firstUser.address === Owner;
+    const isUser2Owner = secondUser.address === Owner;
+    expect(isUser1Owner).to.equal(true);
+    expect(isUser2Owner).to.equal(false);
+  });
+
+  it("Removing Authorisor from non Admin Account", async function () {
+ 
+      await expect(
+        documentContract
+      .connect(secondUser)
+      .removeAuthorized(secondUser.address)
+      ).to.be.revertedWith("Ownable: caller is not the owner");
+    
+  });
+
+  it("Removing Authorisor from Admin Account", async function () {
+ 
+    const t_document = await documentContract
+      .connect(firstUser)
+      .removeAuthorized(secondUser.address);
+    const receipt = await t_document.wait();
+    const isAuth = await documentContract.authorized(secondUser.address);
+    expect(isAuth).to.equal(false);
+  
+});
+
+it("Removing Authorisor from non auth Account", async function () {
+ 
+  await expect(
+    documentContract
+  .connect(secondUser)
+  .removeAuthorized(secondUser.address)
+  ).to.be.revertedWith("Ownable: caller is not the owner");
+
+});
+
+it("Re announce ownership", async function () {
+ 
+  const t_document = await documentContract
+    .connect(firstUser)
+    .renounceOwnership();
+  const receipt = await t_document.wait();
+  const whoAdmin = await documentContract.owner();
+  expect(whoAdmin).to.equal(zeroAcc);
+
+});
+
+
 });
